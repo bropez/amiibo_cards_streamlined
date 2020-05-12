@@ -10,6 +10,22 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 
 
+def upload_reader():
+    """Uploads the required arduino sketch to the arduino.
+
+    Args:
+        No args
+
+    Returns:
+        No returns
+    """
+    print("Uploading DumpInfo.ino...")
+    os.system("arduino-cli compile --fqbn arduino:avr:uno DumpInfo")
+    os.system("arduino-cli upload -p COM3 --fqbn arduino:avr:uno DumpInfo")
+    print("Successfully uploaded.")
+    print("")
+
+
 def write_data_to_file():
     """Writes the nfc card's data to a file
 
@@ -22,12 +38,11 @@ def write_data_to_file():
     """
     ser = serial.Serial('COM3', baudrate=9600, timeout=1)
     
-    with open("Write_amiibo_temp/card_number.txt", "wb") as file:
+    with open("amiibo_information/card_number.txt", "wb") as file:
         print("Open for reading. Please place card on sensor...")
         while True:
             arduino_data = ser.readline()
             file.write(arduino_data)
-            # print(arduino_data)
 
             if str.encode("Dump finished!") in arduino_data:
                 return "dump collection completed."
@@ -46,7 +61,7 @@ def delete_card_number():
         No Returns
     """
     try:
-        os.remove("Write_amiibo_temp/card_number.txt")
+        os.remove("amiibo_information/card_number.txt")
         print("deletion complete.")
     except OSError as e:
         print("An error has occurred. error number: {}".format(e.errno))
@@ -63,7 +78,7 @@ def get_uid():
         line.replace("Card UID: ", ""): The UID in string form if it is formatted correctly
         problem here.: The catch-all if the UID is not correctly formatted in the file
     """
-    with open("Write_amiibo_temp/card_number.txt", "r") as file:
+    with open("amiibo_information/card_number.txt", "r") as file:
         for line in file:
             if "Card UID" in line:
                 print("UID collection completed.")
@@ -88,7 +103,6 @@ def get_bin_replacement(uid, dump_file, key_file):
     options = Options()
     options.headless = True
     browser = Firefox(options=options)
-    # browser = Firefox()
     browser.get("https://games.kel.mn/amiibo/")
 
     uid_input = browser.find_element_by_id("UID")
@@ -104,19 +118,34 @@ def get_bin_replacement(uid, dump_file, key_file):
     element = wait.until(EC.element_to_be_clickable((By.ID, 'dialog')))
 
     dump_output = browser.find_element_by_tag_name("pre").text
-    # print(dump_output)
     browser.quit()
     print("bin collected successfully.")
     return dump_output
 
 
-if __name__ == "__main__":
+def main(file_location):
+    upload_reader()
     print(write_data_to_file())
     uid = get_uid()
     delete_card_number()
     print("You may remove your card now.")
     print("")
 
+    current_dir = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
+    output = get_bin_replacement(uid, 
+        file_location,
+        os.path.join(current_dir, 'key_try2.bin'))
+
+    return output
+
+
+if __name__ == "__main__":
+    upload_reader()
+    print("")
+    print(write_data_to_file())
+    uid = get_uid()
+    delete_card_number()
+    print("You may remove your card now.")
+    print("")
 
     print("we did it")
-    # print(data)
