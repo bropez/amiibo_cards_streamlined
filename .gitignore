@@ -1,6 +1,6 @@
 # Arduino files
-.hex
-.elf
+*.hex
+*.elf
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
