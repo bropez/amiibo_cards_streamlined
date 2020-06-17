@@ -23,6 +23,13 @@ def upload_writer():
 
 
 def replace_bin(bin_string):
+    """Places correct .bin in file
+
+    Args:
+        bin_string: The string that needs to be placed in file
+    Returns:
+        No returns
+    """
     file_path = "Write_amiibo_template/Write_amiibo_template.ino"
     file_path2 = "Final_amiibo/Final_amiibo.ino"
 
@@ -68,6 +75,13 @@ def write_to_card():
 
 
 def delete_temp():
+    """Deletes the temporary file that was created
+
+    Args:
+        No args
+    Returns:
+        No returns
+    """
     try:
         os.remove("Final_amiibo/Final_amiibo.ino")
         print("deletion complete.")
@@ -76,6 +90,13 @@ def delete_temp():
 
 
 def safe_mode():
+    """Changes the arduino into a safer mode
+
+    Args:
+        No args
+    Returns:
+        No returns
+    """
     COM_port = "COM3"
 
     os.system("arduino-cli compile --fqbn arduino:avr:uno servo_off")
