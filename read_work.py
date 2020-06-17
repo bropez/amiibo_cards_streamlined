@@ -19,9 +19,11 @@ def upload_reader():
     Returns:
         No returns
     """
+    COM_port = "COM3"
+
     print("Uploading DumpInfo.ino...")
     os.system("arduino-cli compile --fqbn arduino:avr:uno DumpInfo")
-    os.system("arduino-cli upload -p COM3 --fqbn arduino:avr:uno DumpInfo")
+    os.system("arduino-cli upload -p {} --fqbn arduino:avr:uno DumpInfo".format(COM_port))
     print("Successfully uploaded.")
     print("")
 

@@ -13,9 +13,11 @@ def upload_writer():
     Returns:
         No returns
     """
+    COM_port = "COM3"
+
     print("Uploading Final_amiibo.ino...")
     os.system("arduino-cli compile --fqbn arduino:avr:uno Final_amiibo")
-    os.system("arduino-cli upload -p COM3 --fqbn arduino:avr:uno Final_amiibo")
+    os.system("arduino-cli upload -p {} --fqbn arduino:avr:uno Final_amiibo".format(COM_port))
     print("Successfully uploaded.")
     print("")
 
@@ -28,6 +30,7 @@ def replace_bin(bin_string):
     with open(file_path, "r") as file:
         data = file.read()
         bin_string = "  byte dataBlock[]    = { " + bin_string + " }; "
+        #bin_string = "  byte dataBlock[]    = { " + bin_string + " "
         data2 = data.replace("  byte dataBlock[]    = { replace me plz };", bin_string)
 
         with open(file_path2, "w") as file2:
@@ -72,13 +75,20 @@ def delete_temp():
         print("An error hass occurred. error number: {}".format(e.errno))
 
 
+def safe_mode():
+    COM_port = "COM3"
+
+    os.system("arduino-cli compile --fqbn arduino:avr:uno servo_off")
+    os.system("arduino-cli upload -p {} --fqbn arduino:avr:uno servo_off".format(COM_port))
+
+
 def main(replacement_bin):
     replace_bin(replacement_bin)
     upload_writer()
     write_to_card_output = write_to_card()
     print("")
     print(write_to_card_output)
-    delete_temp()
+    #delete_temp()
     print("You may remove your card.")
     print("")
 
