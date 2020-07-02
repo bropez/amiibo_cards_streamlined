@@ -21,12 +21,15 @@
 #define SS_PIN          10         // Configurable, see typical pin layout above
 
 MFRC522 mfrc522(SS_PIN, RST_PIN);  // Create MFRC522 instance
-Servo servo;
+Servo myServo;
 
 void setup() {
   // servo stuff
-  servo.write(90);
-	servo.attach(8);
+  myServo.write(78);
+  myServo.attach(2);
+  myServo.write(107);
+  delay(700);
+  myServo.write(78);
 
   Serial.begin(9600);		// Initialize serial communications with the PC
   while (!Serial);	  	// Do nothing if no serial port is opened (added for Arduinos based on ATMEGA32U4)

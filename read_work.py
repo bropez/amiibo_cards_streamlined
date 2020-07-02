@@ -19,12 +19,25 @@ def upload_reader():
     Returns:
         No returns
     """
-    COM_port = "COM3"
+    COM_port = "COM5"
+    FQBN = "arduino:avr:nano:cpu=atmega328old"
 
     print("Uploading DumpInfo.ino...")
-    os.system("arduino-cli compile --fqbn arduino:avr:uno DumpInfo")
-    os.system("arduino-cli upload -p {} --fqbn arduino:avr:uno DumpInfo".format(COM_port))
-    print("Successfully uploaded.")
+    # os.system("arduino-cli compile --fqbn arduino:avr:uno DumpInfo")
+    # os.system("arduino-cli upload -p {} --fqbn arduino:avr:uno DumpInfo".format(COM_port))
+    os.system("arduino-cli compile --fqbn {} DumpInfo".format(FQBN))
+    os.system("arduino-cli upload -p {} --fqbn {} DumpInfo".format(COM_port, FQBN))
+    print("upload_reader Successfully uploaded.")
+    print("")
+
+
+def upload_servo_off():
+    COM_port = "COM5"
+    FQBN = "arduino:avr:nano:cpu=atmega328old"
+
+    #os.system("arduino-cli compile --fqbn {} servo_off".format(FQBN))
+    os.system("arduino-cli upload -p {} --fqbn {} servo_off".format(COM_port, FQBN))
+    print("servo_off Successfully uploaded.")
     print("")
 
 
@@ -38,7 +51,7 @@ def write_data_to_file():
         dump collection completed.: A confirmation string when the dump has been completed
         something went wrong.: The catch-all string if something went wrong
     """
-    ser = serial.Serial('COM3', baudrate=9600, timeout=1)
+    ser = serial.Serial('COM5', baudrate=9600, timeout=1)
     
     with open("amiibo_information/card_number.txt", "wb") as file:
         print("Open for reading. Please place card on sensor...")
@@ -128,6 +141,7 @@ def get_bin_replacement(uid, dump_file, key_file):
 def main(file_location):
     upload_reader()
     print(write_data_to_file())
+    upload_servo_off()
     uid = get_uid()
     delete_card_number()
     print("You may remove your card now.")

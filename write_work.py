@@ -13,12 +13,25 @@ def upload_writer():
     Returns:
         No returns
     """
-    COM_port = "COM3"
+    COM_port = "COM5"
+    FQBN = "arduino:avr:nano:cpu=atmega328old"
 
     print("Uploading Final_amiibo.ino...")
-    os.system("arduino-cli compile --fqbn arduino:avr:uno Final_amiibo")
-    os.system("arduino-cli upload -p {} --fqbn arduino:avr:uno Final_amiibo".format(COM_port))
-    print("Successfully uploaded.")
+    # os.system("arduino-cli compile --fqbn arduino:avr:uno Final_amiibo")
+    os.system("arduino-cli compile --fqbn {} Final_amiibo".format(FQBN))
+    # os.system("arduino-cli upload -p {} --fqbn arduino:avr:uno Final_amiibo".format(COM_port))
+    os.system("arduino-cli upload -p {} --fqbn {} Final_amiibo".format(COM_port, FQBN))
+    print("upload_writer Successfully uploaded.")
+    print("")
+
+
+def upload_servo_off():
+    COM_port = "COM5"
+    FQBN = "arduino:avr:nano:cpu=atmega328old"
+    
+    # os.system("arduino-cli compile --fqbn {} servo_off".format(FQBN))
+    os.system("arduino-cli upload -p {} --fqbn {} servo_off".format(COM_port, FQBN))
+    print("upload_servo Successfully uploaded.")
     print("")
 
 
@@ -56,7 +69,7 @@ def write_to_card():
         dump collection completed.: A confirmation string when the dump has been completed
         something went wrong.: The catch-all string if something went wrong
     """
-    ser = serial.Serial('COM3', baudrate=9600, timeout=1)
+    ser = serial.Serial('COM5', baudrate=9600, timeout=1)
 
     print("Open for writing. Please place card on sensor...")
     writing = 0
@@ -86,7 +99,7 @@ def delete_temp():
         os.remove("Final_amiibo/Final_amiibo.ino")
         print("deletion complete.")
     except OSError as e:
-        print("An error hass occurred. error number: {}".format(e.errno))
+        print("An error has occurred. error number: {}".format(e.errno))
 
 
 def safe_mode():
@@ -97,10 +110,13 @@ def safe_mode():
     Returns:
         No returns
     """
-    COM_port = "COM3"
+    COM_port = "COM5"
+    FQBN = "arduino:avr:nano:cpu=atmega328old"
 
-    os.system("arduino-cli compile --fqbn arduino:avr:uno servo_off")
-    os.system("arduino-cli upload -p {} --fqbn arduino:avr:uno servo_off".format(COM_port))
+    # os.system("arduino-cli compile --fqbn arduino:avr:uno servo_off")
+    # os.system("arduino-cli upload -p {} --fqbn arduino:avr:uno servo_off".format(COM_port))
+    os.system("arduino-cli compile --fqbn {} servo_manual_reset".format(FQBN))
+    os.system("arduino-cli upload -p {} --fqbn {} servo_manual_reset".format(COM_port, FQBN))
 
 
 def main(replacement_bin):
@@ -112,6 +128,7 @@ def main(replacement_bin):
     #delete_temp()
     print("You may remove your card.")
     print("")
+    upload_servo_off()
 
 
 
